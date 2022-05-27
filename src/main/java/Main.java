@@ -1,9 +1,11 @@
+import controller.AlertController;
 import controller.Controller;
 import controller.MyBatisConnectionFactory;
 import org.apache.ibatis.session.SqlSessionFactory;
 import persistence.dao.DAO;
 import persistence.dto.*;
 import readAPI.ReadData;
+import service.AlertService;
 import service.CalculateService;
 import service.GraphService;
 import service.SearchService;
@@ -11,6 +13,7 @@ import service.SearchService;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -18,15 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
         public static void main(String[] args) {
-//            SqlSessionFactory sqlSessionFactory = MyBatisConnectionFactory.getSqlSessionFactory();
-//            ReqGraphDTO request = new ReqGraphDTO();
-//            GraphService service = new GraphService(sqlSessionFactory);
-//
-//            request.setStartDate("20220501");
-//            request.setEndDate("20220523");
-//            request.setForex("USD");
-//            ResGraphDTO result = service.bkprGraphMonthService(request);
-//            System.out.println(result.toString());
 
             try {
                 ServerSocket s_socket = new ServerSocket(8888);
@@ -41,9 +35,13 @@ public class Main {
                     threadPoolExecutor.execute(new Task(conn) {
                     });
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+
+
         }
 
         static class Task implements Runnable{
@@ -59,5 +57,6 @@ public class Main {
                 controller.run();
             }
         }
+
 
 }

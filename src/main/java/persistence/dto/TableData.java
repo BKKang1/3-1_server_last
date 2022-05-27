@@ -3,15 +3,15 @@ package persistence.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.ibatis.annotations.Select;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 @Getter
 @Setter
 @ToString
-public class ReqAlertDTO implements Serializable {
+public class TableData implements Serializable {
     private static final long serialVersionUID = 2L;
-    ArrayList<ReqAlertObject> reqList;
+    String type; //분석종류
+    String figure; //수치
+    String analysis; //분석점수
 }

@@ -6,10 +6,9 @@ import lombok.ToString;
 
 import java.io.Serializable;
 
-@Setter
 @Getter
+@Setter
 @ToString
-public class AlertObject implements Serializable {
-    private String currencytmp;
-    private String alertAmount;
+public class ReqTableDTO implements Serializable {
+    private String forex; //외화종류
 }
