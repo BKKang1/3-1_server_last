@@ -33,7 +33,10 @@ public class AlertService {
             //도달했는지 계산
             int country = Country.getCode(tmp.getCurrencytmp());
             DTO data = nowData.get(country); //오늘 데이터 접근
-            int bkpr = Integer.parseInt(data.getBkpr()); //오늘 bkpr 데이터
+            String str = data.getBkpr();
+            System.out.println("bkpr : "+str);
+
+            double bkpr = Double.parseDouble(data.getBkpr().replaceAll(",","")); //오늘 bkpr 데이터
             int amount = Integer.parseInt(tmp.getAlertAmount());
             if(amount <= bkpr){ //희망 가격을 넘으면
                 resultTmp.setJudgement(true);

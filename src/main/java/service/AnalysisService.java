@@ -46,12 +46,12 @@ public class AnalysisService {
 
     public void analyze(double denominator, double molecular,TableData tableData) { //분모,분자,테이블데이터
         int score ;
-        Double tmp = molecular/denominator * 100 -100d;
+        Double tmp = (molecular-denominator)/denominator * 100;
 
-        if(tmp > 60) score=5;
-        else if (tmp>30) score=4;
-        else if (tmp>0) score=3;
-        else if (tmp>-30) score=2;
+        if(tmp > 70) score=5;
+        else if (tmp>=35) score=4;
+        else if (tmp>=0) score=3;
+        else if (tmp>-35) score=2;
         else score=1;
 
         tableData.setFigure(String.valueOf(tmp)); //값

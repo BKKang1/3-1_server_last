@@ -9,10 +9,15 @@ public class Protocol {
     private static DataOutputStream dos;
     private static DataInputStream dis;
     private static byte[] paket;
+    private static Socket socket;
 
     public static void setStream(Socket conn) throws IOException {
         dos = new DataOutputStream(conn.getOutputStream());
         dis = new DataInputStream(conn.getInputStream());
+        socket = conn;
+    }
+    public static Socket getConn(){
+        return socket;
     }
 
     //type
@@ -20,12 +25,13 @@ public class Protocol {
     public static final int TYPE_REQ_GRAPH = 2;
     public static final int TYPE_REQ_ALERT = 3;
     public static final int TYPE_REQ_SEARCH = 4;
+    public static final int TYPE_REQ_ANALYSIS = 5;
 
     public static final int TYPE_RES_CALCULATE = 11;
     public static final int TYPE_RES_GRAPH = 22;
     public static final int TYPE_RES_ALERT = 33;
     public static final int TYPE_RES_SEARCH = 44;
-
+    public static final int TYPE_RES_ANALYSIS = 55;
     //code
     //type -> 1
     public static final int CODE_REQ_CALCUALTE = 1;
@@ -37,7 +43,8 @@ public class Protocol {
     public static final int CODE_REQ_ALERT_ = 0;
     //type -> 4
     public static final int CODE_REQ_SEARCH = 1;
-
+    //type -> 5
+    public static final int CODE_REQ_ANALYSIS = 1;
 
 
     //type -> 11
@@ -50,7 +57,8 @@ public class Protocol {
     public static final int CODE_RES_ALERT_ = 0;
     //type -> 44
     public static final int CODE_RES_SEARCH = 1;
-
+    //type -> 55
+    public static final int CODE_RES_ANALYSIS = 1;
 
     public static void responseToClient(int type, int code, Object obj) throws IOException {
         paket = convertObjectToBytes(type,code,obj);
@@ -65,7 +73,7 @@ public class Protocol {
         int code = typeAndCode[1];
         byte[] byteSize = dis.readNBytes(4);
         int size = Protocol.byteToInt(byteSize);
-        System.out.println("size : " + size);
+
 
         byte[] data = dis.readNBytes(size);
 
@@ -73,6 +81,7 @@ public class Protocol {
         GraphController graphController = new GraphController();
         AlertController alertController = new AlertController();
         SearchController searchController = new SearchController();
+        AnalysisController analysisController= new AnalysisController();
         switch (type){
             case TYPE_REQ_CALCULATE :
                 calculateController.run(code,data);
@@ -86,6 +95,8 @@ public class Protocol {
             case TYPE_REQ_SEARCH:
                 searchController.run(code,data);
                 break;
+            case TYPE_REQ_ANALYSIS:
+                analysisController.run(code,data);
         }
 
 

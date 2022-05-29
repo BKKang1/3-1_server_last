@@ -31,9 +31,22 @@ public class ReadData {
     private static String searchDate;
     private static String apiURL;
 
-    private static final int COUNTRY_COUNT = 23;
+    private static final int COUNTRY_COUNT = 22;
     private static final int DAY_MAX = 31;
     private static final int MONTH_MAX = 12;
+
+
+    public static void initPutDate(){
+        RSI r = new RSI(14);
+        r.doRsi();
+        MACD macd = new MACD();
+        macd.doMacd();
+        HighsLows highsLows = new HighsLows();
+        highsLows.doHighsLows();
+
+        allDataRead("2022");
+        System.out.println("DB 최신화 완료");
+    }
 
     public static void allDataRead(String year) { //과거데이터 읽기
         sqlSessionFactory = MyBatisConnectionFactory.getSqlSessionFactory();
@@ -46,9 +59,10 @@ public class ReadData {
         JSONParser parser = new JSONParser();
 
         for (int month = 1; month <= MONTH_MAX; month++) {
+            int nullCount = 0;
             for (int day = 1; day <= DAY_MAX; day++) {
                 searchDate = getDate(year, month, day);
-                System.out.println(searchDate);
+
                 apiURL = "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=" + authKey + "&searchdate=" + searchDate + "&data=" + dataType;
                 try {
                     URL oracle = new URL(apiURL);
@@ -57,10 +71,15 @@ public class ReadData {
                     String inputLine;
                     JSONArray a = null;
                     while ((inputLine = in.readLine()) != null) {
+                        if(inputLine.equals("[]")){
+
+                            nullCount++;
+                            if(nullCount == 30){
+                                return;
+                            }
+                        }
                         a = (JSONArray) parser.parse(inputLine);
                     }
-
-
                     for (Object o : a) {
                         JSONObject tutorials = (JSONObject) o;
                         if(((long)tutorials.get("result")==4)){
@@ -89,7 +108,7 @@ public class ReadData {
                 } catch (org.json.simple.parser.ParseException e) {
                     e.printStackTrace();
                 } catch (NullPointerException e) {
-                    System.out.println("없는날짜");
+
                     //e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -121,16 +140,19 @@ public class ReadData {
 
     private static ArrayList<DTO> dayRead(String year,int m,int d){
         if(d < 1){
-            d = 31;
+            d = DAY_MAX;
             m -= 1;
         }else if(m < 1){
             int y = Integer.parseInt(year);
-            m = 12;
+            m = MONTH_MAX;
             y -= 1;
             year = Integer.toString(y);
         }
 
         searchDate = getDate(year,m,d);
+
+
+
         ArrayList<DTO> list = new ArrayList<DTO>();
         JSONParser parser = new JSONParser();
         apiURL = "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=" + authKey + "&searchdate=" + searchDate + "&data=" + dataType;
@@ -140,27 +162,29 @@ public class ReadData {
             BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
             String inputLine;
             JSONArray a = null;
+            int count = 0;
             while ((inputLine = in.readLine()) != null) {
+                if(inputLine.equals("[]")){//만약 그 날짜에 데이터가 없으면
+                    d -= 1;  //전날 데이터 불러오기
+
+                    return dayRead(year,m,d);
+                }
+                count++;
                 a = (JSONArray) parser.parse(inputLine);
             }
-            if(a == null){ //만약 그 날짜에 데이터가 없으면
-                d -= 1;  //전날 데이터 불러오기
-                return dayRead(year,m,d);
-            }else{
-                for (Object o : a) {
-                    DTO dto = new DTO();
-                    JSONObject tutorials = (JSONObject) o;
-                    dto.setDate(searchDate);
-                    dto.setUnit((String) tutorials.get("cur_unit"));
-                    dto.setTtb((String) tutorials.get("ttb"));
-                    dto.setTts((String) tutorials.get("tts"));
-                    dto.setDeal((String) tutorials.get("deal_bas_r"));
-                    dto.setBkpr((String) tutorials.get("bkpr"));
-                    if(dto.getUnit().equals("BND")){
-                        continue;
-                    }else{
-                        list.add(dto);
-                    }
+            for (Object o : a) {
+                DTO dto = new DTO();
+                JSONObject tutorials = (JSONObject) o;
+                dto.setDate(searchDate);
+                dto.setUnit((String) tutorials.get("cur_unit"));
+                dto.setTtb((String) tutorials.get("ttb"));
+                dto.setTts((String) tutorials.get("tts"));
+                dto.setDeal((String) tutorials.get("deal_bas_r"));
+                dto.setBkpr((String) tutorials.get("bkpr"));
+                if(dto.getUnit().equals("BND")){
+                    continue;
+                }else{
+                    list.add(dto);
                 }
                 in.close();
             }
@@ -179,11 +203,11 @@ public class ReadData {
         return list;
     }
 
-    private static String getDate(String year, int month, int day) {
+    protected static String getDate(String year, int month, int day) {
         String strMonth, strDay;
         strMonth = (month < 10) ? "0" + Integer.toString(month) : Integer.toString(month);
         strDay = (day < 10) ? "0" + Integer.toString(day) : Integer.toString(day);
         return year + strMonth + strDay;
     }
-}
 
+}

@@ -52,7 +52,15 @@ public class Country {
         }
     }
 
+    static public String getUnit(int code){
+        String[] units = {
+                "AED","AUD","BHD","CAD","CHF","CNH","DKK","EUR","GBP", "HKD",
+                "IDR","JPY","KRW","KWD","MYR","NOK","NZD","SAR","SEK","SGD",
+                "THB","USD"
+        };
 
+        return units[code];
+    }
     static public int getCodeOriginalVer(String unit){
         if(unit.equals("AED")){
             return 0;
@@ -99,7 +107,7 @@ public class Country {
         }else if(unit.equals("USD")){
             return 21;
         }else{
-            System.out.println("unit 잘못입력(없는나라)");
+
             return -1;
         }
     }

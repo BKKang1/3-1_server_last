@@ -51,7 +51,7 @@ public class MyBatisConnectionFactory {
             for(Class mapper:mappers){
                 sqlSessionFactory.getConfiguration().addMapper(mapper);
             }
-            System.out.println("연결완료");
+            System.out.println("DB 최신화 작업 시작");
         }
         catch (FileNotFoundException fileNotFoundException) {
             fileNotFoundException.printStackTrace();

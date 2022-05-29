@@ -14,6 +14,7 @@ public class Controller {
     private DataInputStream dis;
     private DataOutputStream dos;
 
+
     public Controller(Socket conn) {
         try {
             this.conn = conn;
@@ -30,7 +31,7 @@ public class Controller {
                 if(!conn.isConnected()) break;
                 Protocol.receiveData();
             } catch (Exception e){
-                e.printStackTrace();
+                System.out.println(Protocol.getConn()+"에서 연결 끊어짐");
                 break;
             }
         }

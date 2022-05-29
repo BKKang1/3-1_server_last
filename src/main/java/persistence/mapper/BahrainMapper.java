@@ -34,7 +34,7 @@ public interface BahrainMapper extends Mapper {
     public ResSearchDTO selectOneDto(@Param("date") String date);
 
 
-    @Select("SELECT date,bkpr FROM "+tableName+" WHERE date BETWEEN #{startDate} AND #{endDate}")
+    @Select("SELECT bkpr FROM "+tableName+" WHERE date BETWEEN #{startDate} AND #{endDate}")
     public ArrayList<String> selectBkpr(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     @Insert("INSERT INTO "+tableName+" values (#{date}, #{unit}, #{ttb}, #{tts}, #{deal}, #{bkpr})")
