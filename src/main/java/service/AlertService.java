@@ -34,7 +34,6 @@ public class AlertService {
             int country = Country.getCode(tmp.getCurrencytmp());
             DTO data = nowData.get(country); //오늘 데이터 접근
             String str = data.getBkpr();
-            System.out.println("bkpr : "+str);
 
             double bkpr = Double.parseDouble(data.getBkpr().replaceAll(",","")); //오늘 bkpr 데이터
             int amount = Integer.parseInt(tmp.getAlertAmount());

@@ -44,7 +44,7 @@ public class HighsLows {
                 }
             }
 
-            double result = max/(max+min*100);
+            double result = max/(max+min);
             AnalysisDTO analysisDTO = new AnalysisDTO();
             analysisDTO.setForex(Country.getUnit(i));
             analysisDTO.setFigure(result);
