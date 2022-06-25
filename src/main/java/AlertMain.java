@@ -2,6 +2,7 @@ import controller.Controller;
 import readAPI.ReadData;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -13,7 +14,7 @@ public class AlertMain {
     public static void main(String[] args) {
         try {
 
-            ServerSocket s_Alertsocket = new ServerSocket(10001);
+            ServerSocket s_Alertsocket = new ServerSocket(10001,5);
 
             BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<>(10);
             ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5,20,1, TimeUnit.HOURS,blockingQueue);
